@@ -324,6 +324,9 @@ func RegisterGatewayRoutes(
 			}
 			h.Gateway.WebSearch(c)
 		})
+		// DeepSeek Search/Fetch 工具 API：选中 deepseek 账号后原样透传到官方 /v1/tools/*。
+		gateway.POST("/tools/search", func(c *gin.Context) { h.Gateway.ToolsSearch(c) })
+		gateway.POST("/tools/fetch", func(c *gin.Context) { h.Gateway.ToolsFetch(c) })
 		gateway.POST("/x_search", func(c *gin.Context) {
 			if getGroupPlatform(c) != service.PlatformGrok {
 				service.MarkOpsClientBusinessLimited(c, service.OpsClientBusinessLimitedReasonLocalFeatureGate)
@@ -470,6 +473,8 @@ func RegisterGatewayRoutes(
 		}
 		h.OpenAIGateway.GrokRealtime(c)
 	})
+	rootRoute(http.MethodPost, "/tools/search", bodyLimit, func(c *gin.Context) { h.Gateway.ToolsSearch(c) })
+	rootRoute(http.MethodPost, "/tools/fetch", bodyLimit, func(c *gin.Context) { h.Gateway.ToolsFetch(c) })
 	rootRoute(http.MethodPost, "/web_search", bodyLimit, func(c *gin.Context) {
 		if getGroupPlatform(c) != service.PlatformGrok {
 			service.MarkOpsClientBusinessLimited(c, service.OpsClientBusinessLimitedReasonLocalFeatureGate)
